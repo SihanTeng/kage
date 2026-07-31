@@ -114,11 +114,11 @@ The flags you'll actually reach for:
 | Flag | Default | Meaning |
 |------|---------|---------|
 | `-o, --out` | `$HOME/data/kage` | Output root; the mirror lands in `<out>/<host>/` |
-| `-p, --max-pages` | `0` | Stop after N pages (0 = no limit) |
+| `-p, --max-pages` | `0` | Attempt at most N page renders (0 = no limit); failures count |
 | `-d, --max-depth` | `0` | How many links deep to follow (0 = no limit) |
 | `--scope-prefix` | | Only crawl paths starting with this prefix |
 | `--subdomains` | `false` | Treat subdomains of the seed host as in scope |
-| `--exclude` | | Path prefixes to skip (repeatable) |
+| `--exclude` | | Path prefixes to skip (path and descendants; repeatable) |
 | `--scroll` | `false` | Auto-scroll each page to trigger lazy loading |
 | `--workers` | `4` | How many pages to render at once |
 | `--no-robots` | `false` | Ignore `robots.txt` (be nice) |
@@ -258,8 +258,8 @@ The repo is split by concern:
 cmd/kage/   thin main: pins the main thread, then hands off to cli.Execute
 cli/        the cobra command tree and flag wiring
 clone/      the crawl: frontier, render workers, asset workers, resume state
-browser/    headless Chrome control and DOM snapshotting
-sanitize/   strip scripts, handlers, and javascript: URLs from the DOM
+browser/    headless Chrome control (chromedp) and DOM snapshotting
+sanitize/   strip scripts, handlers, active frames, and javascript: URLs
 asset/      download and localise CSS, images, and fonts
 urlx/       the deterministic URL-to-path mapping
 zim/        a pure-Go ZIM reader and writer

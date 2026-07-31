@@ -6,6 +6,26 @@ All notable changes to kage are recorded here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- `go install github.com/tamnd/kage/cmd/kage@latest` works again ([#72](https://github.com/tamnd/kage/issues/72)).
+  The module no longer carries a `replace` directive for `github.com/ysmood/leakless`.
+  Headless Chrome is driven with [chromedp](https://github.com/chromedp/chromedp) and a direct process launch, so the antivirus-flagged leakless helper is not linked at all (also keeps [#68](https://github.com/tamnd/kage/issues/68) fixed without a replace).
+- Saved pages no longer re-root relative URLs against the live origin via a leftover `<base href>`, and active content that escaped the script stripper is neutralized: `iframe` `srcdoc` and `data:text/html` sources, live remote frames, and HTML/SVG `object`/`embed` carriers.
+- Relative links on pages that redirected are resolved against the browser's final URL (and any document `<base href>`), while the page is still written under the discovered URL so existing offline links keep working.
+- Packing a host that has HTML but no root `index.html` synthesises a directory-index landing page so Kiwix and `kage open` no longer jump to an arbitrary first page ([#62](https://github.com/tamnd/kage/issues/62)).
+- `--exclude` matches path prefixes (and descendants), not arbitrary path substrings, matching the docs.
+- Non-UTF-8 `<meta charset>` / Content-Type charset declarations are rewritten to `utf-8`, since kage always serialises pages as UTF-8 ([#16](https://github.com/tamnd/kage/issues/16)).
+
+### Changed
+
+- Removed the unused `--traversal` flag (it was accepted but never read by the crawl engine).
+- `--max-pages` is documented as "attempt at most N page renders"; failed renders count toward the cap.
+
+### Added
+
+- `CONTRIBUTING.md` with build, test, and pull-request expectations.
+
 ## [0.3.9] - 2026-07-08
 
 ### Fixed
@@ -14,6 +34,7 @@ All notable changes to kage are recorded here. The format follows
   go-rod's launcher imports [leakless](https://github.com/ysmood/leakless), which base64/gzip-embeds a prebuilt helper for every platform and links the Windows one into `kage.exe`.
   kage already launches Chrome with leakless disabled, so the helper never ran, only added the flagged bytes.
   A `replace` directive now points the package at an API-compatible stub under `third_party/leakless` that carries no embedded binary, dropping about 1.28 MB from the Windows build.
+  *(Superseded in Unreleased by the chromedp migration, which removes leakless entirely and restores `go install`.)*
 
 ## [0.3.6] - 2026-06-19
 

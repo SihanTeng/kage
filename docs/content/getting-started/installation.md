@@ -85,7 +85,15 @@ kage clone example.com --chrome /path/to/chromium
 export KAGE_CHROME=/path/to/chromium
 ```
 
-If no browser is found, kage's launcher can download a private copy of Chromium
-on first use.
+kage does not download Chromium for you: install Chrome or Chromium, or use the
+container image above.
+
+To block kage from crawling your own site, add a robots.txt group for its agent
+token (the robots fetch matches `User-agent: kage` / `User-agent: Kage`):
+
+```
+User-agent: kage
+Disallow: /
+```
 
 Next: [the quick start](/getting-started/quick-start/).
